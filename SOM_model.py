@@ -3,6 +3,7 @@ from sklearn_som.som import SOM
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+
 # %% prepare data
 df = np.genfromtxt("ks-project_short.csv", delimiter=",", skip_header=1)
 rng = np.random.default_rng(12345)
@@ -13,9 +14,22 @@ df = np.delete(df, [0,1,2,4,7], 1)
 # %%
 df = df[np.all([df[:,0]<400, df[:,1]<50000, df[:,2]<50000], axis=0)]
 #%% train model
-model = SOM(m=3, n=3, dim=3)
+model = SOM(m=50, n=50, dim=3)
 model.fit(df)
+cluster = model.fit_predict(df)
 # %% scatter plot
+fig = plt.figure()
+ax = plt.axes(projection ='3d')
+# colors = ['red','green','blue','purple']
+
+# fig = plt.figure(figsize=(8,8))
+ax.scatter(df[:,0], df[:,1], df[:,2], c=cluster)
+
+# cb = plt.colorbar()
+# loc = np.arange(0,max(label),max(label)/float(len(colors)))
+# cb.set_ticks(loc)
+# cb.set_ticklabels(colors)
+#%%
 fig = plt.figure()
 ax = plt.axes(projection ='3d')
 ax.scatter(df[:,0], df[:,1], df[:,2], alpha=0.1)
