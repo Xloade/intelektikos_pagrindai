@@ -1,8 +1,9 @@
 # %%
-from sklearn_som.som import SOM
+from ast import Str
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy import stats
+from sklearn import cluster
+from sklearn.mixture import GaussianMixture
 
 # %% prepare data
 df = np.genfromtxt("ks-project_short.csv", delimiter=",", skip_header=1)
@@ -14,28 +15,20 @@ df = np.delete(df, [0,1,2,4,7], 1)
 # %%
 df = df[np.all([df[:,0]<400, df[:,1]<50000, df[:,2]<50000], axis=0)]
 #%% train model
-model = SOM(m=50, n=50, dim=3)
-model.fit(df)
-cluster = model.fit_predict(df)
+cluster_num = 3
+gm = GaussianMixture(n_components=cluster_num, random_state=0).fit(df)
+clusters = gm.predict(df);
 # %% scatter plot
 fig = plt.figure()
 ax = plt.axes(projection ='3d')
 # colors = ['red','green','blue','purple']
 
 # fig = plt.figure(figsize=(8,8))
-ax.scatter(df[:,0], df[:,1], df[:,2], c=cluster)
-
-# cb = plt.colorbar()
-# loc = np.arange(0,max(label),max(label)/float(len(colors)))
-# cb.set_ticks(loc)
-# cb.set_ticklabels(colors)
-#%%
-fig = plt.figure()
-ax = plt.axes(projection ='3d')
-ax.scatter(df[:,0], df[:,1], df[:,2], alpha=0.1)
-cluster_centers = np.concatenate(model.cluster_centers_, axis=1)
-ax.scatter(cluster_centers[:,0], cluster_centers[:,1], cluster_centers[:,2], color="r")
-
+ax.scatter(df[:,0], df[:,1], df[:,2], c=clusters)
+ax.set_title("Klusterių grafikas, kai yra " +  str(cluster_num) +" klusteriai")
+ax.set_xlabel("backers")
+ax.set_ylabel("usd_pledged_real")
+ax.set_zlabel("usd_goal_real")
 plt.show()
-# %%
+
 # %%
